@@ -5,7 +5,7 @@ require 'securerandom'
 module Lakala
 module Utils
   def self.nonce_str
-    SecureRandom.hex(6)[0, 12]
+    SecureRandom.hex(7)[0, 12]
   end
 
   def self.stringify_keys(hash)

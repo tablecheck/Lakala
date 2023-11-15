@@ -12,7 +12,7 @@ module Sign
       "#{lkl_app_id}\n#{lkl_serial_no}\n#{lkl_timestamp}\n#{lkl_nonce_str}\n#{response_body}\n"
     end
 
-    def generate(request_body)
+    def generate(params)
       timestamp = Time.now.to_i
       nonce_str = Lakala::Utils.nonce_str
 
@@ -20,11 +20,11 @@ module Sign
                        "#{Lakala.configuration.serial_no}\n" \
                        "#{timestamp}\n" \
                        "#{nonce_str}\n" \
-                       "#{{ 'reqData' => request_body }}\n"
+                       "#{params}\n"
 
-      signed_string = Lakala.configuration.private_key.sign(OpenSSL::Digest.new('SHA256'), string_to_sign)
+      signature = Lakala.configuration.private_key.sign(OpenSSL::Digest.new('SHA256'), string_to_sign)
 
-      Base64.strict_encode64(signed_string)
+      Base64.strict_encode64(signature)
     end
 
     def verify?(headers, body)

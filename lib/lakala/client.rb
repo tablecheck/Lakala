@@ -34,12 +34,15 @@ module Lakala
       http.use_ssl = true
       http.verify_mode = OpenSSL::SSL::VERIFY_PEER
 
-      headers = generate_authorization_header(body)
+      prepared_params = prepared_params(body).to_json
+
+      headers = generate_authorization_header(prepared_params)
 
       request = Net::HTTP::Post.new(uri.path, headers)
-      request.body = prepared_params(body).to_json
+      request.body = prepared_params
+      request.content_type = 'application/json'
 
-      response
+      http.request(request)
     end
 
     def requires!(options, required_opts)
@@ -49,11 +52,11 @@ module Lakala
     end
 
     def generate_authorization_header(params)
-      auth_string = "appid=#{config.app_id}," \
-                    "serial_no=#{config.serial_no}," \
-                    "timestamp=#{Time.now.to_i}," \
-                    "nonce_str=#{Lakala::Utils.nonce_str}," \
-                    "signature=#{Lakala::Sign.generate(params)}"
+      auth_string = "appid='#{config.app_id}'," \
+                    "serial_no='#{config.serial_no}'," \
+                    "nonce_str='#{Lakala::Utils.nonce_str}'," \
+                    "timestamp='#{Time.now.to_i}'," \
+                    "signature='#{Lakala::Sign.generate(params)}'"
 
       {
         'Content-Type' => 'application/json',
