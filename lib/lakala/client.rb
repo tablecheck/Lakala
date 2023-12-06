@@ -13,9 +13,22 @@ module Lakala
       Response.new(response)
     end
 
+    def query_order(options)
+      options = Lakala::Utils.stringify_keys(options)
+      if options['out_order_no'].nil?
+        requires!(options, %w[pay_order_no channel_id])
+      else
+        requires!(options, %w[merchant_no out_order_no])
+      end
+
+      response = req('/api/v3/ccss/counter/order/query', options)
+
+      Response.new(response)
+    end
+
     private
 
-    def prepared_params(request_body)
+    def prepare_params(request_body)
       {
         req_data: request_body,
         version: '3.0',
@@ -28,19 +41,12 @@ module Lakala
     end
 
     def req(path, body)
-      uri = URI.parse("#{Lakala.gateway_url}#{path}")
-      uri.scheme = 'https' # Set the URI scheme to HTTPS
-      http = Net::HTTP.new(uri.host, uri.port)
-      http.use_ssl = true
-      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
-
-      prepared_params = prepared_params(body).to_json
-
+      uri = build_uri(path)
+      http = build_http(uri)
+      prepared_params = prepare_params(body).to_json
       headers = generate_authorization_header(prepared_params)
 
-      request = Net::HTTP::Post.new(uri.path, headers)
-      request.body = prepared_params
-      request.content_type = 'application/json'
+      request = build_post_request(uri, headers, prepared_params)
 
       http.request(request)
     end
@@ -62,6 +68,26 @@ module Lakala
         'Content-Type' => 'application/json',
         'Authorization' => "LKLAPI-SHA256withRSA #{auth_string}"
       }
+    end
+
+    def build_uri(path)
+      uri = URI.parse("#{Lakala.gateway_url}#{path}")
+      uri.scheme = 'https'
+      uri
+    end
+
+    def build_http(uri)
+      http = Net::HTTP.new(uri.host, uri.port)
+      http.use_ssl = true
+      http.verify_mode = OpenSSL::SSL::VERIFY_PEER
+      http
+    end
+
+    def build_post_request(uri, headers, prepared_params)
+      request = Net::HTTP::Post.new(uri.path, headers)
+      request.body = prepared_params
+      request.content_type = 'application/json'
+      request
     end
   end
 end
