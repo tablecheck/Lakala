@@ -26,6 +26,28 @@ module Lakala
       Response.new(response)
     end
 
+    def refund(options)
+      options = Lakala::Utils.stringify_keys(options)
+      requires!(options, %w[merchant_no term_no out_refund_order_no refund_amount request_ip geo_location])
+
+      opts = { 'location_info' => { 'request_ip' => options['request_ip'], 'location' => options['geo_location'] } }
+      options.merge!(opts)
+
+      response = req('/sit/api/v3/labs/relation/idmrefund', options)
+
+      Response.new(response)
+    end
+
+    def query_refund_order
+      options = Lakala::Utils.stringify_keys(options)
+
+      requires!(options, %w[merchant_no term_no out_refund_order_no])
+
+      response = req('/sit/api/v3/labs/query/idmrefundquery', options)
+
+      Response.new(response)
+    end
+
     private
 
     def prepare_params(request_body)
