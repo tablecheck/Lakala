@@ -9,7 +9,7 @@ Gem::Specification.new do |spec|
   spec.email = ["drineliu@gmail.com"]
 
   spec.summary = "Lakala gem"
-  spec.description = "Lakala gem"
+  spec.description = "Lakala gem with some basic features"
   spec.homepage = "https://github.com/CoolDrinELiu/lakala"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.6.0"
@@ -25,8 +25,8 @@ Gem::Specification.new do |spec|
   spec.executables   = spec.files.grep(%r{^exe/}) { |f| File.basename(f) }
   spec.require_paths = ["lib"]
 
-  spec.add_development_dependency "bundler"
-  spec.add_development_dependency "rake"
-  spec.add_development_dependency "minitest"
-  spec.add_development_dependency "webmock"
+  spec.add_development_dependency "bundler", "~> 2.0"
+  spec.add_development_dependency "rake", "~> 13.0"
+  spec.add_development_dependency "minitest", "~> 5.0"
+  spec.add_development_dependency "webmock", "~> 3.19", '>= 3.19.1'
 end

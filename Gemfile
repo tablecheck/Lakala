@@ -8,6 +8,6 @@ gemspec
 gem "rake", "~> 13.0"
 
 group :test do
-  gem 'webmock'
+  gem 'webmock', '~> 3.19', '>= 3.19.1'
   gem "rspec", "~> 3.0"
 end
