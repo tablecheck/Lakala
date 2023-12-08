@@ -16,8 +16,8 @@ require 'lakala/utils'
 require 'lakala/response'
 
 module Lakala
-  GATEWAY_URL = 'https://s2.lakala.com/'
-  SANDBOX_GATEWAY_URL = 'https://test.wsmsd.cn/sit'
+  GATEWAY_URL = 'https://s2.lakala.com'
+  SANDBOX_GATEWAY_URL = 'https://test.wsmsd.cn'
 
   attr_accessor :app_id, :serial_no, :private_key, :public_key, :sandbox_mode, :configuration
 

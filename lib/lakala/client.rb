@@ -8,7 +8,7 @@ module Lakala
       options = Lakala::Utils.stringify_keys(options)
       requires!(options, %w[out_order_no merchant_no total_amount order_info order_efficient_time])
 
-      response = req('/api/v3/ccss/counter/order/create', options)
+      response = req('/sit/api/v3/ccss/counter/order/create', options)
 
       Response.new(response)
     end
@@ -21,24 +21,31 @@ module Lakala
         requires!(options, %w[merchant_no out_order_no])
       end
 
-      response = req('/api/v3/ccss/counter/order/query', options)
+      response = req('/sit/api/v3/ccss/counter/order/query', options)
 
       Response.new(response)
     end
 
     def refund(options)
       options = Lakala::Utils.stringify_keys(options)
-      requires!(options, %w[merchant_no term_no out_refund_order_no refund_amount request_ip geo_location])
+      requires!(options, %w[merchant_no term_no out_trade_no refund_amount request_ip])
+      requires_at_least_one!(options, %w[origin_out_trade_no origin_trade_no origin_log_no])
 
-      opts = { 'location_info' => { 'request_ip' => options['request_ip'], 'location' => options['geo_location'] } }
+      opts = {
+        'location_info' => {
+          'request_ip' => options['request_ip'],
+          'location' => options['geo_location'],
+          'base_station' => options['base_station']
+        }
+      }.compact
       options.merge!(opts)
 
-      response = req('/sit/api/v3/labs/relation/idmrefund', options)
+      response = req('/sit/api/v3/labs/relation/refund', options)
 
       Response.new(response)
     end
 
-    def query_refund_order
+    def query_refund_order(options)
       options = Lakala::Utils.stringify_keys(options)
 
       requires!(options, %w[merchant_no term_no out_refund_order_no])
@@ -77,6 +84,12 @@ module Lakala
       required_opts.each do |f|
         raise "Missing required argument: #{f}" if options[f].nil? && !options[f]&.to_s&.empty? && options[f] != false
       end
+    end
+
+    def requires_at_least_one!(options, required_opts)
+      return unless required_opts.none? { |f| options.key?(f) && !options[f]&.to_s&.empty? && options[f] != false }
+
+      raise "At least one of the options is required: #{required_opts.join(', ')}"
     end
 
     def generate_authorization_header(params)

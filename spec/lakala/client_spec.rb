@@ -102,7 +102,7 @@ RSpec.describe Lakala::Client do
     end
 
     context '#refund' do
-      let(:url) { 'https://test.wsmsd.cn/sit/api/v3/labs/relation/idmrefund' }
+      let(:url) { 'https://test.wsmsd.cn/sit/api/v3/labs/relation/refund' }
       let(:res) do
         { 'msg': '成功',
           'resp_time': '20210907173417',
@@ -128,15 +128,29 @@ RSpec.describe Lakala::Client do
       it do
         result = Lakala::Client.new.refund(
           merchant_no: '8221210594300JY',
-          term_no: '123',
-          out_refund_order_no: 'wxy2021090700003',
-          refund_amount: 100_00,
-          geo_location: '+37.123456789,-121.123456789',
-          request_ip: '0.0.0.0',
+          geo_location: '30.700323750778548, 104.0029400018854',
+          request_ip: '222.209.111.239',
+          refund_amount: 1,
+          term_no: 'A0073841',
+          out_trade_no: 'aa3c56723123',
+          origin_trade_no: '2023120866210311384863'
         )
 
         expect(result).to be_a(Lakala::Response)
         expect(result.success?).to be_truthy
+      end
+
+      it 'should raise error' do
+        expect do
+          Lakala::Client.new.refund(
+            merchant_no: '8221210594300JY',
+            geo_location: '30.700323750778548, 104.0029400018854',
+            request_ip: '222.209.111.239',
+            refund_amount: 1,
+            term_no: 'A0073841',
+            out_trade_no: 'aa3c56723123'
+          )
+        end.to raise_error('At least one of the options is required: origin_out_trade_no, origin_trade_no, origin_log_no')
       end
     end
 
@@ -173,6 +187,17 @@ RSpec.describe Lakala::Client do
       end
 
       it do
+        result = Lakala::Client.new.query_refund_order(
+          merchant_no: '8221210594300JY',
+          term_no: '123',
+          out_refund_order_no: 'wxy2021090700003',
+          refund_amount: 100_00,
+          geo_location: '+37.123456789,-121.123456789',
+          request_ip: '0.0.0.0'
+        )
+
+        expect(result).to be_a(Lakala::Response)
+        expect(result.success?).to be_truthy
       end
     end
   end
