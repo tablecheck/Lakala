@@ -93,11 +93,13 @@ module Lakala
     end
 
     def generate_authorization_header(params)
+      nonce_str = Lakala::Utils.nonce_str
+
       auth_string = "appid='#{config.app_id}'," \
                     "serial_no='#{config.serial_no}'," \
-                    "nonce_str='#{Lakala::Utils.nonce_str}'," \
+                    "nonce_str='#{nonce_str}'," \
                     "timestamp='#{Time.now.to_i}'," \
-                    "signature='#{Lakala::Sign.generate(params)}'"
+                    "signature='#{Lakala::Sign.generate(params, nonce_str)}'"
 
       {
         'Content-Type' => 'application/json',

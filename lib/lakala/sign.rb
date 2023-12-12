@@ -12,9 +12,8 @@ module Sign
       "#{lkl_app_id}\n#{lkl_serial_no}\n#{lkl_timestamp}\n#{lkl_nonce_str}\n#{response_body}\n"
     end
 
-    def generate(params)
+    def generate(params, nonce_str)
       timestamp = Time.now.to_i
-      nonce_str = Lakala::Utils.nonce_str
 
       string_to_sign = "#{Lakala.configuration.app_id}\n" \
                        "#{Lakala.configuration.serial_no}\n" \
