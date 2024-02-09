@@ -15,5 +15,6 @@ module Utils
     end
     new_hash
   end
+
 end
 end

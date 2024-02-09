@@ -13,6 +13,7 @@ require 'lakala/client'
 require 'lakala/sign'
 require 'lakala/utils'
 require 'lakala/response'
+require 'lakala/header_generator'
 
 module Lakala
   GATEWAY_URL = 'https://s2.lakala.com'

@@ -4,9 +4,16 @@ module Lakala
   class Client
     attr_reader :response
 
+    def initialize(serial_no = nil)
+      @serial_no = serial_no || config.serial_no
+    end
+
     def create_order(options = {})
       options = Lakala::Utils.stringify_keys(options)
+
       requires!(options, %w[out_order_no merchant_no total_amount order_info order_efficient_time])
+
+      raise ArgumentError, 'total_amount must be a positive integer' unless options['total_amount'].is_a?(Integer) && options['total_amount'] > 0
 
       response = req('/sit/api/v3/ccss/counter/order/create', options)
 
@@ -93,18 +100,7 @@ module Lakala
     end
 
     def generate_authorization_header(params)
-      nonce_str = Lakala::Utils.nonce_str
-
-      auth_string = "appid='#{config.app_id}'," \
-                    "serial_no='#{config.serial_no}'," \
-                    "nonce_str='#{nonce_str}'," \
-                    "timestamp='#{Time.now.to_i}'," \
-                    "signature='#{Lakala::Sign.generate(params, nonce_str)}'"
-
-      {
-        'Content-Type' => 'application/json',
-        'Authorization' => "LKLAPI-SHA256withRSA #{auth_string}"
-      }
+      Lakala::HeaderGenerator.new(params, @serial_no).generate
     end
 
     def build_uri(path)
