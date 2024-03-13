@@ -14,12 +14,13 @@ require 'lakala/sign'
 require 'lakala/utils'
 require 'lakala/response'
 require 'lakala/header_generator'
+require 'lakala/cypher/client'
 
 module Lakala
   GATEWAY_URL = 'https://s2.lakala.com'
-  SANDBOX_GATEWAY_URL = 'https://test.wsmsd.cn'
+  SANDBOX_GATEWAY_URL = 'https://test.wsmsd.cn/sit/'
 
-  attr_accessor :app_id, :serial_no, :private_key, :public_key, :sandbox_mode, :configuration
+  attr_accessor :configuration
 
   class << self
     def configuration

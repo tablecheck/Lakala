@@ -15,7 +15,19 @@ module Lakala
 
       raise ArgumentError, 'total_amount must be a positive integer' unless options['total_amount'].is_a?(Integer) && options['total_amount'] > 0
 
-      response = req('/sit/api/v3/ccss/counter/order/create', options)
+      response = req('/api/v3/ccss/counter/order/create', options)
+
+      Response.new(response)
+    end
+
+    def create_order_enc(options = {})
+      options = Lakala::Utils.stringify_keys(options)
+
+      requires!(options, %w[out_order_no merchant_no total_amount order_info order_efficient_time])
+
+      raise ArgumentError, 'total_amount must be a positive integer' unless options['total_amount'].is_a?(Integer) && options['total_amount'] > 0
+
+      response = req('/api/v3/ccss/counter/order/create_encry', options, encrypt: true)
 
       Response.new(response)
     end
@@ -28,7 +40,7 @@ module Lakala
         requires!(options, %w[merchant_no out_order_no])
       end
 
-      response = req('/sit/api/v3/ccss/counter/order/query', options)
+      response = req('/api/v3/ccss/counter/order/query', options)
 
       Response.new(response)
     end
@@ -47,7 +59,7 @@ module Lakala
       }.compact
       options.merge!(opts)
 
-      response = req('/sit/api/v3/labs/relation/refund', options)
+      response = req('/api/v3/labs/relation/refund', options)
 
       Response.new(response)
     end
@@ -57,7 +69,7 @@ module Lakala
 
       requires!(options, %w[merchant_no term_no out_refund_order_no])
 
-      response = req('/sit/api/v3/labs/query/idmrefundquery', options)
+      response = req('/api/v3/labs/query/idmrefundquery', options)
 
       Response.new(response)
     end
@@ -76,13 +88,18 @@ module Lakala
       Lakala.configuration
     end
 
-    def req(path, body)
+    def req(path, body, encrypt: false)
       uri = build_uri(path)
       http = build_http(uri)
-      prepared_params = prepare_params(body).to_json
-      headers = generate_authorization_header(prepared_params)
 
-      request = build_post_request(uri, headers, prepared_params)
+      prepared_body = prepare_params(body).to_json
+
+      request_body = encrypt ? encrypt(prepared_body) : prepared_body
+
+      headers = generate_authorization_header(request_body)
+
+
+      request = build_post_request(uri, headers, request_body)
 
       http.request(request)
     end
@@ -121,6 +138,10 @@ module Lakala
       request.body = prepared_params
       request.content_type = 'application/json'
       request
+    end
+
+    def encrypt(data)
+      ::Lakala::Cypher::Client.new(data).encrypt
     end
   end
 end
