@@ -18,7 +18,7 @@ require 'lakala/cypher/client'
 
 module Lakala
   GATEWAY_URL = 'https://s2.lakala.com'
-  SANDBOX_GATEWAY_URL = 'https://test.wsmsd.cn/sit/'
+  SANDBOX_GATEWAY_URL = 'https://test.wsmsd.cn/sit'
 
   attr_accessor :configuration
 
