@@ -6,11 +6,11 @@ Gem::Specification.new do |spec|
   spec.name = "lakala"
   spec.version = Lakala::VERSION
   spec.authors = ["drineliu"]
-  spec.email = ["drineliu@gmail.com"]
+  spec.email = ["drine.liu@external.tablecheck.com"]
 
   spec.summary = "Lakala gem"
   spec.description = "Lakala gem with some basic features"
-  spec.homepage = "https://github.com/CoolDrinELiu/lakala"
+  spec.homepage = "https://github.com/tablecheck/Lakala"
   spec.license = "MIT"
   spec.required_ruby_version = ">= 2.6.0"
 
