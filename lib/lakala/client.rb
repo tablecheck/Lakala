@@ -8,16 +8,16 @@ module Lakala
       @serial_no = serial_no || config.serial_no
     end
 
-    def create_order(options = {}, encryption: true)
+    def create_order(options = { encryption: true })
       options = Lakala::Utils.stringify_keys(options)
 
       requires!(options, %w[out_order_no merchant_no total_amount order_info order_efficient_time])
 
       raise ArgumentError, 'total_amount must be a positive integer' unless options['total_amount'].is_a?(Integer) && options['total_amount'] > 0
 
-      endpoint = encryption ? '/api/v3/ccss/counter/order/create_encry' : '/api/v3/ccss/counter/order/create'
+      endpoint = options[:encryption] ? '/api/v3/ccss/counter/order/create_encry' : '/api/v3/ccss/counter/order/create'
 
-      response = req('/api/v3/ccss/counter/order/create_encry', options, encrypt: encryption)
+      response = req('/api/v3/ccss/counter/order/create_encry', options, encrypt: options[:encryption])
 
       Response.new(response)
     end
