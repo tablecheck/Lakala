@@ -16,13 +16,16 @@ If bundler is not being used to manage dependencies, install the gem by executin
 
 ``` ruby
 # Create order -> http://open.lakala.com/#/home/document/detail?id=283
-Lakala::Client.new.create_order(
-          merchant_no: '8221210594300JY',
-          out_order_no: 'aa3c56712',
-          total_amount: 200,
-          order_info: 'Test Product',
-          order_efficient_time: '20231113163310'
-        )
+options = {
+            merchant_no: '8221210594300JY',
+            out_order_no: 'aa3c56712',
+            total_amount: 200,
+            order_info: 'Test Product',
+            order_efficient_time: '20231113163310'
+          }
+Lakala::Client.new.create_order(options)
+# or without encryption
+Lakala::Client.new.create_order(options, encryption: false)
 
 # Query order -> http://open.lakala.com/#/home/document/detail?id=284
 Lakala::Client.new.query_order(merchant_no: '8221210594300JY', out_order_no: 'aa3c56712')

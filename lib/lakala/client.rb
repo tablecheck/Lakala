@@ -8,7 +8,7 @@ module Lakala
       @serial_no = serial_no || config.serial_no
     end
 
-    def create_order(encryption: true, **options)
+    def create_order(options, encryption: true)
       options = Lakala::Utils.stringify_keys(options)
 
       requires!(options, %w[out_order_no merchant_no total_amount order_info order_efficient_time])

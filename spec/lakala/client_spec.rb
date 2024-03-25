@@ -35,18 +35,20 @@ RSpec.describe Lakala::Client do
           }
         }
       end
-
+      let(:options) do
+        {
+          merchant_no: '8221210594300JY',
+          out_order_no: 'aa3c56712',
+          total_amount: 200,
+          order_info: 'Test Product',
+          order_efficient_time: '20231113163310'
+        }
+      end
       context 'with encryption' do
         let(:url) { 'https://test.wsmsd.cn/sit/api/v3/ccss/counter/order/create_encry' }
 
         it do
-          result = Lakala::Client.new.create_order(
-            merchant_no: '8221210594300JY',
-            out_order_no: 'aa3c56712',
-            total_amount: 200,
-            order_info: 'Test Product',
-            order_efficient_time: '20231113163310'
-          )
+          result = Lakala::Client.new.create_order(options)
   
           expect(result).to be_a(Lakala::Response)
           expect(result.success?).to be_truthy
@@ -57,14 +59,14 @@ RSpec.describe Lakala::Client do
         let(:url) { 'https://test.wsmsd.cn/sit/api/v3/ccss/counter/order/create' }
 
         it do
-          result = Lakala::Client.new.create_order(
-            encryption: false,
+          options = {
             merchant_no: '8221210594300JY',
             out_order_no: 'aa3c56712',
             total_amount: 200,
             order_info: 'Test Product',
             order_efficient_time: '20231113163310'
-          )
+          }
+          result = Lakala::Client.new.create_order(options, encryption: false)
 
           expect(result).to be_a(Lakala::Response)
           expect(result.success?).to be_truthy
