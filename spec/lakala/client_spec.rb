@@ -9,6 +9,7 @@ RSpec.describe Lakala::Client do
       Lakala.configure do |config|
         config.app_id = 'OP00000003'
         config.serial_no = '00dfba8194c41b84cf'
+        config.cypher_key = '0I4M0kmwFrNUU8hZ9AFpfA=='
         config.sandbox_mode = true
         config.private_key = OpenSSL::PKey::RSA.new(2048).to_pem
       end
@@ -17,8 +18,7 @@ RSpec.describe Lakala::Client do
              .to_return(status: 200, body: res.to_json, headers: { 'Content-Type' => 'application/json' })
     end
 
-    context '#create_order' do
-      let(:url) { 'https://test.wsmsd.cn/sit/api/v3/ccss/counter/order/create' }
+    describe '#create_order' do
       let(:res) do
         {
           'msg': '操作成功',
@@ -36,17 +36,39 @@ RSpec.describe Lakala::Client do
         }
       end
 
-      it do
-        result = Lakala::Client.new.create_order(
-          merchant_no: '8221210594300JY',
-          out_order_no: 'aa3c56712',
-          total_amount: 200,
-          order_info: 'Test Product',
-          order_efficient_time: '20231113163310'
-        )
+      context 'with encryption' do
+        let(:url) { 'https://test.wsmsd.cn/sit/api/v3/ccss/counter/order/create_encry' }
 
-        expect(result).to be_a(Lakala::Response)
-        expect(result.success?).to be_truthy
+        it do
+          result = Lakala::Client.new.create_order(
+            merchant_no: '8221210594300JY',
+            out_order_no: 'aa3c56712',
+            total_amount: 200,
+            order_info: 'Test Product',
+            order_efficient_time: '20231113163310'
+          )
+  
+          expect(result).to be_a(Lakala::Response)
+          expect(result.success?).to be_truthy
+        end
+      end
+
+      context 'without encryption' do
+        let(:url) { 'https://test.wsmsd.cn/sit/api/v3/ccss/counter/order/create' }
+
+        it do
+          result = Lakala::Client.new.create_order(
+            encryption: false,
+            merchant_no: '8221210594300JY',
+            out_order_no: 'aa3c56712',
+            total_amount: 200,
+            order_info: 'Test Product',
+            order_efficient_time: '20231113163310'
+          )
+
+          expect(result).to be_a(Lakala::Response)
+          expect(result.success?).to be_truthy
+        end
       end
     end
 

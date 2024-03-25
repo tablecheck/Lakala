@@ -1,7 +1,7 @@
 PATH
   remote: .
   specs:
-    lakala (0.1.3)
+    lakala (0.1.4)
 
 GEM
   remote: https://rubygems.org/
