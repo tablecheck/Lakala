@@ -12,15 +12,28 @@ module Lakala
 
     def private_key=(private_key)
       @private_key = OpenSSL::PKey::RSA.new(private_key)
+    rescue OpenSSL::PKey::RSAError
+      log_warning('Invalid private key for Lakala')
     end
 
     def public_key=(public_key)
-      @private_key = OpenSSL::X509::Certificate.new(public_key).public_key
+      @public_key = OpenSSL::X509::Certificate.new(public_key).public_key
+    rescue OpenSSL::X509::CertificateError
+      log_warning('Invalid public key for Lakala')
     end
 
     def cypher_key=(cypher_key)
       @cypher_key = Base64.strict_decode64(cypher_key)
     end
 
+    private
+
+    def log_warning(message)
+      if defined?(Rails) && Rails.logger
+        Rails.logger.warn(message)
+      else
+        puts "[WARNING] #{message}"
+      end
+    end
   end
 end

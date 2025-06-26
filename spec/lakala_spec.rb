@@ -2,7 +2,8 @@
 
 RSpec.describe Lakala do
   describe '#attr_accessor' do
-    let(:private_key) do
+    context 'when the private key is valid' do
+      let(:private_key) do
 <<-EOF
 -----BEGIN PUBLIC KEY-----
 MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAxqt6Y4wOcTHeLCgO9Dw+
@@ -14,9 +15,9 @@ BhAMiGVXBLQUrfuA6p//6McIltDe/U7e5kDFdGMLyJ38/lypeQUqrbZwc+dWD1Es
 HwIDAQAB
 -----END PUBLIC KEY-----
 EOF
-    end
+      end
 
-    let(:public_key) do
+      let(:public_key) do
 <<-EOF
 -----BEGIN CERTIFICATE-----
 MIIDoDCCAoigAwIBAgIGAYu4QKeJMA0GCSqGSIb3DQEBBQUAMGAxFDASBgNVBAMM
@@ -41,22 +42,51 @@ tVryCgEBt4VkZFphYLPEFLTYqr3O1l3DxRjVOidoJVMabPQTfvyZ3TVPEXU6VMxE
 eXY0CgyZYxN6lqfxgkoZGTJJ/Co=
 -----END CERTIFICATE-----
 EOF
-    end
-
-    it do
-      Lakala.configure do |config|
-        config.app_id = '123'
-        config.serial_no = '456'
-        config.private_key = private_key
-        config.public_key = public_key
-        config.sandbox_mode = true
       end
 
-      expect(Lakala.configuration.app_id).to eq '123'
-      expect(Lakala.configuration.serial_no).to eq '456'
-      expect(Lakala.configuration.private_key).to_not be_nil
-      expect(Lakala.configuration.public_key).to_not be_nil
-      expect(Lakala.configuration.sandbox_mode).to be_truthy
+      it do
+        Lakala.configure do |config|
+          config.app_id = '123'
+          config.serial_no = '456'
+          config.private_key = private_key
+          config.public_key = public_key
+          config.sandbox_mode = true
+        end
+
+        expect(Lakala.configuration.app_id).to eq '123'
+        expect(Lakala.configuration.serial_no).to eq '456'
+        expect(Lakala.configuration.private_key).to_not be_nil
+        expect(Lakala.configuration.public_key).to_not be_nil
+        expect(Lakala.configuration.sandbox_mode).to be_truthy
+      end
+    end
+
+    context 'when the private key is invalid' do
+      let(:private_key) do
+<<-EOF
+Invalid private key
+EOF
+      end
+
+      let(:public_key) do
+<<-EOF
+-----BEGIN CERTIFICATE-----
+Invalid public key
+-----END CERTIFICATE-----
+EOF
+      end
+
+      it do
+        expect {
+          Lakala.configure do |config|
+            config.app_id = '123'
+            config.serial_no = '456'
+            config.private_key = private_key
+            config.public_key = public_key
+            config.sandbox_mode = true
+          end
+        }.to_not raise_error(OpenSSL::PKey::RSAError)
+      end
     end
   end
 end
