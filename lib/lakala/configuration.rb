@@ -23,7 +23,7 @@ module Lakala
     end
 
     def cypher_key=(cypher_key)
-      if cypher_key.empty?
+      if cypher_key.nil?
         log_warning('[WARNING] Cypher Key is missing')
       else
         @cypher_key = Base64.strict_decode64(cypher_key)
