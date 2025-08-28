@@ -45,7 +45,7 @@ RSpec.describe Lakala::Client do
         }
       end
       context 'with encryption' do
-        let(:url) { 'https://test.wsmsd.cn/sit/api/v3/ccss/counter/order/create_encry' }
+        let(:url) { 'https://test.wsmsd.cn/sit/api/v3/ccss/counter/order/special_create_encry' }
 
         it do
           result = Lakala::Client.new.create_order(options)
