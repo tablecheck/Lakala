@@ -15,7 +15,7 @@ module Lakala
 
       raise ArgumentError, 'total_amount must be a positive integer' unless options['total_amount'].is_a?(Integer) && options['total_amount'] > 0
 
-      endpoint = encryption ? '/api/v3/ccss/counter/order/create_encry' : '/api/v3/ccss/counter/order/create'
+      endpoint = encryption ? '/api/v3/ccss/counter/order/special_create_encry' : '/api/v3/ccss/counter/order/create'
 
       response = req(endpoint, options, encrypt: encryption)
 
